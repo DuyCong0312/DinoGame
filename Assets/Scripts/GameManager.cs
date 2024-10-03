@@ -7,22 +7,23 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-
+    public float gameSpeed {  get; private set; }
     public float initialGameSpeed = 5f;
     public float gameSpeedIncrease = 0.1f;
-    public float gameSpeed {  get; private set; }
+    public float score { get; private set; }
+    private int scoreMileStone = 100; 
+
+    public GameObject gameOverPanel;
+    public GameObject pauseMenuPanel;
 
     private AudioManager audioManager;
-    public TextMeshProUGUI gameOverText;
+
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI hiscoreText;
-    public Button retryButton;
-
+   
     private Player player;
     private Spawner spawner;
-
-    private float score;
-    private int scoreMileStone = 100;
+    private BackgroundColor backGround;
 
     private void Awake()
     {
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
     { 
         player = FindObjectOfType<Player>();
         spawner = FindObjectOfType<Spawner>();
+        backGround = FindObjectOfType<BackgroundColor>();
 
         NewGame();
     }
@@ -68,8 +70,10 @@ public class GameManager : MonoBehaviour
 
         player.gameObject.SetActive(true);
         spawner.gameObject.SetActive(true);
-        gameOverText.gameObject.SetActive(false);
-        retryButton.gameObject.SetActive(false);
+        pauseMenuPanel.gameObject.SetActive(false);
+        gameOverPanel.gameObject.SetActive(false);
+
+        backGround.SetDayMode();
 
         UpdateHiscore();
     }
@@ -81,9 +85,9 @@ public class GameManager : MonoBehaviour
 
         player.gameObject.SetActive(false);
         spawner.gameObject.SetActive(false);
-        gameOverText.gameObject.SetActive(true);
-        retryButton.gameObject.SetActive(true);
-
+        pauseMenuPanel.gameObject.SetActive(false);
+        gameOverPanel.gameObject.SetActive(true);
+       
         UpdateHiscore();
     }
 
@@ -110,5 +114,22 @@ public class GameManager : MonoBehaviour
         }
 
         hiscoreText.text = Mathf.RoundToInt(hiscore).ToString("D5");
+    }
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        pauseMenuPanel.gameObject.SetActive(true);
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        pauseMenuPanel.gameObject.SetActive(false);
+    }
+
+    public void RetryGame()
+    {
+        Time.timeScale = 1f;
+        NewGame();
     }
 }

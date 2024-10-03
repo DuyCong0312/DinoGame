@@ -19,13 +19,17 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
-        {     
-            if (isGrounded == true)
-            {  
-                audioManager.PlaySFX(audioManager.buttonClip);
-                rb.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
-                isGrounded = false;   
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                if (isGrounded == true)
+                {
+                    audioManager.PlaySFX(audioManager.buttonClip);
+                    rb.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
+                    isGrounded = false;
+                }
             }     
         }
         JumpStatus();
