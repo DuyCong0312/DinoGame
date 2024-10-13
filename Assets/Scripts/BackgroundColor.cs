@@ -8,34 +8,43 @@ public class BackgroundColor : MonoBehaviour
     [SerializeField] private Color dayColor;    
     [SerializeField] private Color nightColor;   
 
-    private bool isDay = true;
+    public bool isDay = true;
     public float colorChangeSpeed = 1.0f;  
-    public int scoreThreshold = 100;    
-    private int nextScoreThreshold;
+    public int scoreThreshold = 100;
 
     private void Awake()
     {
         camera = Camera.main;
-        nextScoreThreshold = scoreThreshold; 
     }
     public void SetDayMode()
     {
         isDay = true;
-        camera.backgroundColor = dayColor; 
-    }
+        camera.backgroundColor = dayColor;
+        scoreThreshold = 100;
+}
     private void Update()
     {
-        if (GameManager.Instance.score >= nextScoreThreshold)
-        {
-            ToggleDayNightMode();
-            nextScoreThreshold += scoreThreshold;  
-        }
-
-        Color targetColor = isDay ? dayColor : nightColor;
-        camera.backgroundColor = Color.Lerp(camera.backgroundColor, targetColor, colorChangeSpeed * Time.deltaTime);
+        CheckScore();   
+        ChangeColor();
     }
     private void ToggleDayNightMode()
     {
         isDay = !isDay;
     }
+
+    private void CheckScore()
+    {
+        if (GameManager.Instance.score >= scoreThreshold)
+        {
+            ToggleDayNightMode();
+            scoreThreshold += 100;
+        }
+    }
+
+    private void ChangeColor()
+    {
+        Color targetColor = isDay ? dayColor : nightColor;
+        camera.backgroundColor = Color.Lerp(camera.backgroundColor, targetColor, colorChangeSpeed * Time.deltaTime);
+    }
+
 }

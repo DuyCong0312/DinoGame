@@ -16,8 +16,17 @@ public class Ground : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector2.left * GameManager.Instance.gameSpeed * Time.deltaTime);
+        MoveLeft();
+        CheckBounds();
+    }
 
+    private void MoveLeft()
+    {
+        transform.Translate(Vector2.left * GameManager.Instance.gameSpeed * Time.deltaTime);
+    }
+
+    private void CheckBounds()
+    {
         if (transform.position.x < resetPosition)
         {
             transform.position = new Vector2(startPosition, transform.position.y);

@@ -12,8 +12,17 @@ public class Obstacle : MonoBehaviour
     }
     private void Update()
     {
-        transform.Translate(Vector2.left * GameManager.Instance.gameSpeed * Time.deltaTime);
+        MoveLeft();
+        CheckBounds();
+    }
 
+    private void MoveLeft()
+    {
+        transform.Translate(Vector2.left * GameManager.Instance.gameSpeed * Time.deltaTime);
+    }
+
+    private void CheckBounds()
+    {
         if (transform.position.x < leftEdge)
         {
             Destroy(gameObject);

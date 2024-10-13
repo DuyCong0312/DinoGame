@@ -15,8 +15,9 @@ public class GameManager : MonoBehaviour
 
     public GameObject gameOverPanel;
     public GameObject pauseMenuPanel;
+    public GameObject settingMenuPanel;
 
-    private AudioManager audioManager;
+    [SerializeField] private AudioManager audioManager;
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI hiscoreText;
@@ -25,9 +26,9 @@ public class GameManager : MonoBehaviour
     private Spawner spawner;
     private BackgroundColor backGround;
 
+    private const string HiScore = "HiScore";
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
         if (Instance == null)
         {
             Instance = this;
@@ -55,6 +56,12 @@ public class GameManager : MonoBehaviour
         NewGame();
     }
 
+    private void Update() 
+    {
+        UpdateSpeed();
+        UpdateScore();
+    }
+
     public void NewGame()
     {
         Obstacle[] obstacles = FindObjectsOfType<Obstacle>();
@@ -71,8 +78,9 @@ public class GameManager : MonoBehaviour
         player.gameObject.SetActive(true);
         spawner.gameObject.SetActive(true);
         pauseMenuPanel.gameObject.SetActive(false);
+        settingMenuPanel.gameObject.SetActive(false);
         gameOverPanel.gameObject.SetActive(false);
-
+        
         backGround.SetDayMode();
 
         UpdateHiscore();
@@ -86,14 +94,23 @@ public class GameManager : MonoBehaviour
         player.gameObject.SetActive(false);
         spawner.gameObject.SetActive(false);
         pauseMenuPanel.gameObject.SetActive(false);
+        settingMenuPanel.gameObject.SetActive(false);
         gameOverPanel.gameObject.SetActive(true);
        
         UpdateHiscore();
     }
 
-    private void Update()
+    private void UpdateSpeed()
     {
-        gameSpeed += gameSpeedIncrease * Time.deltaTime;
+        gameSpeed += gameSpeedIncrease * Time.deltaTime;   
+        if( gameSpeed >= 100)
+        {
+            gameSpeed = 100;
+        }
+    }
+
+    private void UpdateScore()
+    {
         score += gameSpeed * Time.deltaTime;
         scoreText.text = Mathf.RoundToInt(score).ToString("D5");
 
@@ -105,12 +122,12 @@ public class GameManager : MonoBehaviour
     }
     private void UpdateHiscore()
     {
-        float hiscore = PlayerPrefs.GetFloat("hiscore", 0);
+        float hiscore = PlayerPrefs.GetFloat(HiScore, 0);
 
         if (score > hiscore)
         {
             hiscore = score;
-            PlayerPrefs.SetFloat("hiscore", hiscore);
+            PlayerPrefs.SetFloat(HiScore, hiscore);
         }
 
         hiscoreText.text = Mathf.RoundToInt(hiscore).ToString("D5");
@@ -125,11 +142,26 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         pauseMenuPanel.gameObject.SetActive(false);
+        settingMenuPanel.gameObject.SetActive(false);
     }
 
     public void RetryGame()
     {
         Time.timeScale = 1f;
         NewGame();
+    }
+
+    public void SettingGame()
+    {
+        Time.timeScale = 0f;
+        settingMenuPanel.gameObject.SetActive(true);
+        pauseMenuPanel.gameObject.SetActive(false);
+    }
+
+    public void CloseSetting()
+    {
+        Time.timeScale = 0f;
+        settingMenuPanel.gameObject.SetActive(false);
+        pauseMenuPanel.gameObject.SetActive(true);
     }
 }
